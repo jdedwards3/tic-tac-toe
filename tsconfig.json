@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "lib": ["es6", "dom"],
+    "removeComments": true,
+    "target": "es6",
+    "sourceMap": true,
+    "outDir": "./built"
+  },
+  "inclue": ["src/**/*"],
+  "exclude": []
+}

@@ -1,0 +1,15 @@
+.gridsquare-square {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  height: 10rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+.gridsquare-shape {
+  line-height: 2;
+  font-size: 5rem;
+  text-transform: uppercase;
+  font-size: 5rem;
+}
