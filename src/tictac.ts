@@ -76,14 +76,14 @@ class TicTacViewModel {
   constructor() {
     this.gameGrid = ko.observable(new GameGrid());
     this.turn = new Mark(ko.observable());
-    this.getTurn = ko.computed(() => this.flipTurn(this.turn.shape()));
+    this.getTurn = ko.computed(() => this.flipTurnShape(this.turn));
   }
 
   updateTurn = (selectedGridSquare: GridSquare): void => {
     [!selectedGridSquare.mark.shape()]
       .filter(item => item && !this.gameGrid().isWinner())
       .map(() => {
-        this.turn.shape(this.flipTurn(this.turn.shape()));
+        this.turn.shape(this.flipTurnShape(this.turn));
         selectedGridSquare.mark.shape(this.turn.shape());
       });
   };
@@ -92,8 +92,8 @@ class TicTacViewModel {
     this.gameGrid(new GameGrid());
   };
 
-  private flipTurn = (shape: string): string =>
-    ({ x: "o", o: "x", undefined: "x" }[shape]);
+  private flipTurnShape = (turn: Mark): string =>
+    ({ x: "o", o: "x", undefined: "x" }[turn.shape()]);
 }
 
 ko.applyBindings(new TicTacViewModel());
