@@ -27,3 +27,7 @@
   border-left: 4px solid #3f3f3f;
   border-right: 4px solid #3f3f3f;
 }
+
+.reset-button {
+  height: 5rem;
+}
