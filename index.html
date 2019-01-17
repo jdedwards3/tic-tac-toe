@@ -18,16 +18,13 @@
       </div>
       <div
         class="row mb-5 gridsquare-row"
-        data-bind="foreach: gameGrid().gridSquares()"
+        data-bind="foreach: gameGrid().gridSquares"
       >
         <div
           class="col-4 gridsquare-square"
           data-bind="click: function() { $root.updateTurn($data)}"
         >
-          <span
-            class="gridsquare-shape"
-            data-bind="text: mark().shape()"
-          ></span>
+          <span class="gridsquare-shape" data-bind="text: mark.shape()"></span>
         </div>
       </div>
       <div class="row">
@@ -49,14 +46,16 @@
               data-bind="text: turn.shape()"
             ></span>
             <span>is the winner!</span>
-            <div>
-              <button
-                data-bind="click: function(){$root.resetGameGrid()}"
-                type="button"
-                class="btn btn-primary btn-lg"
-              >
-                Reset Game
-              </button>
+            <div class="row justify-content-center py-5">
+              <div class="col-4">
+                <button
+                  data-bind="click: function(){resetGame()}"
+                  type="button"
+                  class="btn btn-primary btn-lg btn-block reset-button"
+                >
+                  Reset Game
+                </button>
+              </div>
             </div>
           </span>
         </div>
