@@ -1,3 +1,14 @@
+.current-turn-display {
+  text-transform: uppercase;
+}
+
+.gridsquare-shape {
+  line-height: 2;
+  font-size: 5rem;
+  text-transform: uppercase;
+  font-size: 5rem;
+}
+
 .gridsquare-square {
   display: flex;
   justify-content: center;
@@ -7,9 +18,12 @@
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
 }
-.gridsquare-shape {
-  line-height: 2;
-  font-size: 5rem;
-  text-transform: uppercase;
-  font-size: 5rem;
+
+.gridsquare-square:nth-child(-n + 6) {
+  border-bottom: 4px solid #3f3f3f;
+}
+
+.gridsquare-square:nth-child(3n + 2) {
+  border-left: 4px solid #3f3f3f;
+  border-right: 4px solid #3f3f3f;
 }

@@ -20,16 +20,21 @@ class GameGrid {
 }
 class TicTacViewModel {
     constructor() {
+        this.flipTurn = (shape) => ({ x: "o", o: "x", undefined: "x" }[shape]);
         this.updateTurn = (selectedGridSquare) => {
             [!selectedGridSquare.mark().shape()]
-                .filter(item => item && !this.gameGrid.isWinner())
+                .filter(item => item && !this.gameGrid().isWinner())
                 .map(() => {
-                this.turn.shape({ x: "o", o: "x", undefined: "x" }[this.turn.shape()]);
+                this.turn.shape(this.flipTurn(this.turn.shape()));
                 selectedGridSquare.mark().shape(this.turn.shape());
             });
         };
-        this.gameGrid = new GameGrid();
+        this.resetGameGrid = () => {
+            this.gameGrid(new GameGrid());
+        };
+        this.gameGrid = ko.observable(new GameGrid());
         this.turn = new Mark(ko.observable());
+        this.getTurn = ko.computed(() => this.flipTurn(this.turn.shape()));
     }
 }
 ko.applyBindings(new TicTacViewModel());

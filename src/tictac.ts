@@ -71,21 +71,30 @@ class GameGrid {
 }
 
 class TicTacViewModel {
-  public gameGrid: GameGrid;
+  public gameGrid: KnockoutObservable<GameGrid>;
   private turn: Mark;
+  public getTurn: KnockoutComputed<string>;
 
   constructor() {
-    this.gameGrid = new GameGrid();
+    this.gameGrid = ko.observable(new GameGrid());
     this.turn = new Mark(ko.observable());
+    this.getTurn = ko.computed(() => this.flipTurn(this.turn.shape()));
   }
+
+  private flipTurn = (shape: string): string =>
+    ({ x: "o", o: "x", undefined: "x" }[shape]);
 
   updateTurn = (selectedGridSquare: GridSquare): void => {
     [!selectedGridSquare.mark().shape()]
-      .filter(item => item && !this.gameGrid.isWinner())
+      .filter(item => item && !this.gameGrid().isWinner())
       .map(() => {
-        this.turn.shape({ x: "o", o: "x", undefined: "x" }[this.turn.shape()]);
+        this.turn.shape(this.flipTurn(this.turn.shape()));
         selectedGridSquare.mark().shape(this.turn.shape());
       });
+  };
+
+  resetGameGrid = (): void => {
+    this.gameGrid(new GameGrid());
   };
 }
 
