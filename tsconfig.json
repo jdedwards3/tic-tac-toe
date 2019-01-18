@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["es6", "dom"],
+    "noImplicitAny": true,
     "removeComments": true,
     "target": "es6",
     "sourceMap": true,
