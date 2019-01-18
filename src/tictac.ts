@@ -13,11 +13,11 @@ class GridSquare {
 }
 
 class GameGrid {
-  gridSquares: GridSquare[];
+  public gridSquares: GridSquare[];
+  isWinner: KnockoutComputed<boolean>;
   columns: IGridComponent;
   rows: IGridComponent;
   diagonals: IGridComponent;
-  isWinner: KnockoutComputed<boolean>;
 
   constructor() {
     this.gridSquares = Array.from(
@@ -25,33 +25,44 @@ class GameGrid {
       () => new GridSquare(new Mark(ko.observable()))
     );
 
-    this.columns = ["left", "mid", "right"].reduce(
-      (column, area, areaIndex) => ({
-        ...column,
-        [area]: this.gridSquares.filter(
-          (_, gridIndex) => gridIndex % 3 === areaIndex
-        )
-      }),
-      {}
-    );
+    const gridSquareSubset = (
+      areaIndex: number,
+      subsetFunction: (areaIndex: number) => GridSquare[]
+    ): GridSquare[] => subsetFunction(areaIndex);
 
-    this.rows = ["top", "mid", "bottom"].reduce(
-      (row, area, areaIndex) => ({
-        ...row,
-        [area]: this.gridSquares.slice(areaIndex * 3, 3 + areaIndex * 3)
-      }),
-      {}
-    );
+    const buildGridComponent = (
+      areas: string[],
+      subsetFunction: (areaIndex: number) => GridSquare[]
+    ): IGridComponent =>
+      areas.reduce(
+        (component: IGridComponent, area: string, areaIndex: number) => ({
+          ...component,
+          [area]: gridSquareSubset(areaIndex, subsetFunction)
+        }),
+        {}
+      );
 
-    this.diagonals = ["left", "right"].reduce(
-      (diagonal, area, areaIndex) => ({
-        ...diagonal,
-        [area]: this.gridSquares.filter(
-          (_, gridIndex) =>
-            [[0, 4, 8], [2, 4, 6]][areaIndex].indexOf(gridIndex) > -1
+    const buildComponentOptions = (
+      areas: string[],
+      subset: (areaIndex: number) => GridSquare[]
+    ): any => ({ areas: areas, subset: subset });
+
+    [this.columns, this.rows, this.diagonals] = Array.from(
+      [
+        buildComponentOptions(["left", "mid", "right"], (areaIndex: number) =>
+          this.gridSquares.filter((_, gridIndex) => gridIndex % 3 === areaIndex)
+        ),
+        buildComponentOptions(["top", "mid", "bottom"], (areaIndex: number) =>
+          this.gridSquares.slice(areaIndex * 3, 3 + areaIndex * 3)
+        ),
+        buildComponentOptions(["left", "right"], (areaIndex: number) =>
+          this.gridSquares.filter(
+            (_, gridIndex) =>
+              [[0, 4, 8], [2, 4, 6]][areaIndex].indexOf(gridIndex) > -1
+          )
         )
-      }),
-      {}
+      ],
+      options => buildGridComponent(options.areas, options.subset)
     );
 
     this.isWinner = ko.computed(() =>
@@ -71,29 +82,30 @@ class GameGrid {
 class TicTacViewModel {
   gameGrid: KnockoutObservable<GameGrid>;
   getTurn: KnockoutComputed<string>;
-  private turn: Mark;
+  private turn: KnockoutObservable<Mark>;
 
   constructor() {
     this.gameGrid = ko.observable(new GameGrid());
-    this.turn = new Mark(ko.observable());
-    this.getTurn = ko.computed(() => this.flipTurnShape(this.turn));
+    this.turn = ko.observable(new Mark(ko.observable()));
+    this.getTurn = ko.computed(() => this.flipTurnShape(this.turn()));
   }
 
   updateTurn = (selectedGridSquare: GridSquare): void => {
     [!selectedGridSquare.mark.shape()]
       .filter(item => item && !this.gameGrid().isWinner())
       .map(() => {
-        this.turn.shape(this.flipTurnShape(this.turn));
-        selectedGridSquare.mark.shape(this.turn.shape());
+        this.turn().shape(this.flipTurnShape(this.turn()));
+        selectedGridSquare.mark.shape(this.turn().shape());
       });
   };
 
-  resetGameGrid = (): void => {
+  resetGame = (): void => {
     this.gameGrid(new GameGrid());
+    this.turn(new Mark(ko.observable()));
   };
 
   private flipTurnShape = (turn: Mark): string =>
-    ({ x: "o", o: "x", undefined: "x" }[turn.shape()]);
+    (<any>{ x: "o", o: "x", undefined: "x" })[turn.shape()];
 }
 
 ko.applyBindings(new TicTacViewModel());
